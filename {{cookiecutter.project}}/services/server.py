@@ -6,7 +6,6 @@ from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-import core.cache
 import api
 
 from core.exceptions.base import CustomException
@@ -29,6 +28,8 @@ def init_router(app: FastAPI):
 def create_app() -> FastAPI:
     app = FastAPI(
         redoc_url=None,
+        title=env.TITLE,
+        description=env.DESCRIPTION,
         middleware=init_middleware(),
     )
     init_settings(app)
@@ -84,6 +85,7 @@ def init_settings(app: FastAPI):
     async def startup_event():
         if env.DB_INIT:
             from core.db.session import Base, engines
+
             async with engines["writer"].begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
 

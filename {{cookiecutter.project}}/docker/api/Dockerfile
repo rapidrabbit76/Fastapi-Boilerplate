@@ -14,8 +14,7 @@ RUN pip install --no-cache-dir \
     ujson==5.5.0 \
     pydantic[email] \
     pydantic \
-    PyJWT==2.5.0
-RUN pip install --no-cache-dir \
+    PyJWT==2.5.0 \
     SQLAlchemy==1.4.39 \
     PyMySQL==1.0.2 \
     aiomysql==0.1.1 \
