@@ -1,0 +1,57 @@
+version: "3.7"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    environment:
+      TZ: Asia/Seoul
+      DB_WRITER_DB_URL: "mysql+aiomysql://admin:admin@db:3306/mydatabase"
+      DB_READER_DB_URL: "mysql+aiomysql://admin:admin@db:3306/mydatabase"
+      DB_INIT: "False"
+      DB_POOL_RECYCLE: 3600
+      DB_ECHO: "True"
+
+      JWT_SECRET_KEY: SECRET
+      JWT_ALGORITHM: HS256
+      JWT_REFRESH_TOKEN_EXP: 1209600
+      JWT_ACCESS_TOKEN_EXP: 3600
+
+      CACHE_ALIAS: redis_local
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  db:
+    image: docker.io/bitnami/mariadb:10.6
+    expose:
+      - 3306
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      TZ: Asia/Seoul
+      MARIADB_ROOT_PASSWORD: admin
+      MARIADB_USER: admin
+      MARIADB_DATABASE: mydatabase
+      MARIADB_PASSWORD: admin
+
+  redis:
+    build:
+      context: .
+      dockerfile: docker/redis/Dockerfile
+    expose:
+      - 6379
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  redisinsights:
+    image: redislabs/redisinsight:latest
+    restart: always
+    ports:
+      - '127.0.0.1:8001:8001'
