@@ -15,4 +15,4 @@ redis_local:
 local:
   cache: aiocache.SimpleMemoryCache
   serializer:
-    class: aiocache.serializers.StringSerializer
+    class: aiocache.serializers.PickleSerializer

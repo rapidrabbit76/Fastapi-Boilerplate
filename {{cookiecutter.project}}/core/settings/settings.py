@@ -20,7 +20,7 @@ class SecuritySetting(BaseSettings):
 
 class CacheSetting(BaseSettings):
     CACHE_CONFIG_FILE_PATH: str = "env/cache.yaml"
-    CACHE_ALIAS: str = None
+    CACHE_ALIAS: str = 'local'
     CACHE_REDIS_HOST: str = "localhost"
     CACHE_REDIS_PORT: int = 6379
 
@@ -72,3 +72,5 @@ class Settings(
     CORS_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: T.List[str] = ["*"]
     CORS_ALLOW_HEADERS: T.List[str] = ["*"]
+    TITLE: str = "{{cookiecutter.project}}"
+    DESCRIPTION: str = "{{cookiecutter.description}}"

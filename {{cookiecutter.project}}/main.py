@@ -2,7 +2,7 @@ import uvicorn
 
 
 def main():
-    app = "app.server:app"
+    app = "services.server:app"
     uvicorn.run(
         app,
         port=8080,

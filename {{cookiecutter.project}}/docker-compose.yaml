@@ -2,6 +2,7 @@ version: "3.7"
 
 services:
   api:
+    image: ys2lee/fastapi-boilerplate:latest
     build:
       context: .
       dockerfile: docker/api/Dockerfile
@@ -25,8 +26,8 @@ services:
       JWT_ACCESS_TOKEN_EXP: 3600
 
       CACHE_ALIAS: redis_local
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      CACHE_REDIS_HOST: redis
+      CACHE_REDIS_PORT: 6379
 
   db:
     image: docker.io/bitnami/mariadb:10.6

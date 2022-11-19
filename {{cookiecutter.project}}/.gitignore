@@ -1,9 +1,6 @@
 # IDE
 .vscode/
 
-# git
-.git/
-
 # CACHE
 **/__pycache__/**
 .pytest_cache
@@ -19,17 +16,11 @@
 *.pth
 *.onnx
 
-# ETC
-env/
-static/
-docker-compose.yaml
-*.ipynb
-
 # LOG
+tensorboard/
+wandb/
 logs/
 
 # DEV
 debug.py
-
-# frontend
-frontend/
+*.ipynb
