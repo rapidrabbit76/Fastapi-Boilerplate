@@ -20,6 +20,8 @@ from core.middlewares.timer import TimeHeaderMiddleware
 from core.middlewares.cache_control import CacheControl, CacheControlMiddleware
 from core.settings import env
 
+from core.admin import admin_app
+
 
 def init_router(app: FastAPI):
     app.include_router(api.home.router, tags=["Home"])
@@ -34,6 +36,8 @@ def create_app() -> FastAPI:
     )
     init_settings(app)
     init_router(app)
+    admin_app(app)
+
     return app
 
 
