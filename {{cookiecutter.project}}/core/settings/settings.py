@@ -61,16 +61,23 @@ class GZipSetting(BaseSettings):
         return v
 
 
+class MiddleWareSetting(BaseSettings):
+    TIME_HEADER_ENABLE: bool = True
+    LOGGING_ENABLE: bool = True
+
+
 class Settings(
     DatabaseSetting,
     CacheSetting,
     SecuritySetting,
     CacheControlSetting,
     GZipSetting,
+    MiddleWareSetting,
 ):
     CORS_ALLOW_ORIGINS: T.List[str] = ["*"]
     CORS_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: T.List[str] = ["*"]
     CORS_ALLOW_HEADERS: T.List[str] = ["*"]
+
     TITLE: str = "{{cookiecutter.project}}"
     DESCRIPTION: str = "{{cookiecutter.description}}"
