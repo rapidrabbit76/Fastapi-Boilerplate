@@ -44,10 +44,15 @@ engines = {
 
 class RoutingSession(Session):
     def get_bind(self, mapper=None, clause=None, **kw):
+        bind_key = "reader"
         if self._flushing or isinstance(clause, (Update, Delete, Insert)):
             return engines["writer"].sync_engine
-        else:
-            return engines["reader"].sync_engine
+
+        if hasattr(mapper.class_, "__bind_key__"):
+            bind_key = mapper.class_.__bind_key__
+            return engines[bind_key].sync_engine
+
+        return engines["reader"].sync_engine
 
 
 async_session_factory = sessionmaker(

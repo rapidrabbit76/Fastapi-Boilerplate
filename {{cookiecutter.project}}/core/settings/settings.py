@@ -20,7 +20,7 @@ class SecuritySetting(BaseSettings):
 
 class CacheSetting(BaseSettings):
     CACHE_CONFIG_FILE_PATH: str = "env/cache.yaml"
-    CACHE_ALIAS: str = 'local'
+    CACHE_ALIAS: str = "local"
     CACHE_REDIS_HOST: str = "localhost"
     CACHE_REDIS_PORT: int = 6379
 
