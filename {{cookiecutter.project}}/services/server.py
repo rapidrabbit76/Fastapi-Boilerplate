@@ -50,7 +50,7 @@ def init_middleware() -> T.List[Middleware]:
             allow_methods=env.CORS_ALLOW_METHODS,
             allow_headers=env.CORS_ALLOW_HEADERS,
         ),
-        # SQLAlchemy session Middleware
+        # Auth  Middleware
         Middleware(
             AuthenticationMiddleware,
             backend=AuthBackend(),
@@ -58,20 +58,32 @@ def init_middleware() -> T.List[Middleware]:
         ),
         # SQLAlchemy session Middleware
         Middleware(SQLAlchemyMiddleware),
-        # Req logging Middleware
-        Middleware(LoggingMiddleware),
-        # Time Header Middleware
-        Middleware(TimeHeaderMiddleware),
-        # Cahce-Control Middleware
-        Middleware(
-            CacheControlMiddleware,
-            cache_control=CacheControl(
-                cacheablity=env.CACHE_CONTROL_CACHEABLITY,
-                max_age=env.CACHE_CONTROL_MAX_AGE,
-                s_maxage=env.CACHE_CONTROL_S_MAXAGE,
-            ),
-        ),
     ]
+
+    if env.LOGGING_ENABLE:
+        # Req logging Middleware
+        middlewares.append(
+            Middleware(LoggingMiddleware),
+        )
+
+    if env.LOGGING_ENABLE:
+        # Time Header Middleware
+        middlewares.append(
+            Middleware(TimeHeaderMiddleware),
+        )
+
+    if env.CACHE_CONTROL_ENABLE:
+        # Cahce-Control Middleware
+        middlewares.append(
+            Middleware(
+                CacheControlMiddleware,
+                cache_control=CacheControl(
+                    cacheablity=env.CACHE_CONTROL_CACHEABLITY,
+                    max_age=env.CACHE_CONTROL_MAX_AGE,
+                    s_maxage=env.CACHE_CONTROL_S_MAXAGE,
+                ),
+            ),
+        )
 
     if env.GZIP_ENABLE:
         middlewares.append(
