@@ -4,13 +4,13 @@ from typing import Union
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     create_async_engine,
-    async_scoped_session,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.sql.expression import Update, Delete, Insert
 
 from core.settings import env
+from starlette.requests import Request
 
 
 session_context: ContextVar[str] = ContextVar("session_context")
@@ -61,18 +61,8 @@ async_session_factory = sessionmaker(
 )
 
 
-async def get_db_session() -> AsyncSession:
-    session = async_session_factory()
-    try:
-        yield session
-    finally:
-        await session.close()
-
-
-session: Union[AsyncSession, async_scoped_session] = async_scoped_session(
-    session_factory=async_session_factory,
-    scopefunc=get_session_context,
-)
+def get_db_session(request: Request):
+    return request.state.db
 
 
 Base = declarative_base()
