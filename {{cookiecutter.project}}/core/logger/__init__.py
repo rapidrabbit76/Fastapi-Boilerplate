@@ -1,7 +1,3 @@
-from .config import init_logging
-import logging
-from loguru import logger
+from .custom_logger import configure_logging
 
-# logger = logging.getLogger("uvicorn")
-
-init_logging()
+__all__ = ["configure_logging"]

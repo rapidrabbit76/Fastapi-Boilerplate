@@ -34,7 +34,7 @@ services:
     expose:
       - 3306
     ports:
-      - "127.0.0.1:3306:3306"
+      - "0.0.0.0:3306:3306"
     environment:
       TZ: Asia/Seoul
       MARIADB_ROOT_PASSWORD: admin
@@ -50,9 +50,3 @@ services:
       - 6379
     ports:
       - "127.0.0.1:6379:6379"
-
-  redisinsights:
-    image: redislabs/redisinsight:latest
-    restart: always
-    ports:
-      - '127.0.0.1:8001:8001'

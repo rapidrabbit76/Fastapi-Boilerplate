@@ -1,126 +1,64 @@
-import typing as T
 from fastapi import FastAPI
-from fastapi.requests import Request
-from fastapi.responses import JSONResponse
-from fastapi.middleware import Middleware
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
+
 
 import api
 
-from core.exceptions.base import CustomException
-from core.middlewares.authentication import (
-    AuthBackend,
-    AuthenticationMiddleware,
-    on_auth_error,
+
+from core.middlewares import (
+    Middleware,
+    CORSMiddleware,
+    GZipMiddleware,
+    CorrelationIdMiddleware,
+    LoggingMiddleware,
+    SQLAlchemyMiddleware,
 )
-from core.middlewares.logging import LoggingMiddleware
-from core.middlewares.sqlalchemy import SQLAlchemyMiddleware
-from core.middlewares.timer import TimeHeaderMiddleware
-from core.middlewares.cache_control import CacheControl, CacheControlMiddleware
+from core.exceptions import (
+    HTTPException,
+    exception_handler,
+    http_exception_handler,
+)
+from core import events
+from core.logger import configure_logging
 from core.settings import env
 
-from core.admin import admin_app
-
-
-def init_router(app: FastAPI):
-    app.include_router(api.home.router, tags=["Home"])
+configure_logging(
+    logging_path=env.LOG_PATH,
+    logging_filename=env.LOG_FILENAME,
+    service="Backend",
+)
 
 
 def create_app() -> FastAPI:
     app = FastAPI(
         redoc_url=None,
-        title=env.TITLE,
-        description=env.DESCRIPTION,
-        middleware=init_middleware(),
-    )
-    init_settings(app)
-    init_router(app)
-    admin_app(app)
-
-    return app
-
-
-def init_middleware() -> T.List[Middleware]:
-    middlewares = [
-        Middleware(
-            CORSMiddleware,
-            allow_origins=env.CORS_ALLOW_ORIGINS,
-            allow_credentials=env.CORS_CREDENTIALS,
-            allow_methods=env.CORS_ALLOW_METHODS,
-            allow_headers=env.CORS_ALLOW_HEADERS,
-        ),
-        # Auth  Middleware
-        Middleware(
-            AuthenticationMiddleware,
-            backend=AuthBackend(),
-            on_error=on_auth_error,
-        ),
-        # SQLAlchemy session Middleware
-        Middleware(SQLAlchemyMiddleware),
-    ]
-
-    if env.LOGGING_ENABLE:
-        # Req logging Middleware
-        middlewares.append(
-            Middleware(LoggingMiddleware),
-        )
-
-    if env.LOGGING_ENABLE:
-        # Time Header Middleware
-        middlewares.append(
-            Middleware(TimeHeaderMiddleware),
-        )
-
-    if env.CACHE_CONTROL_ENABLE:
-        # Cahce-Control Middleware
-        middlewares.append(
+        docs_url=None if env.MODE.upper() == "PROD" else "/docs",
+        middleware=[
             Middleware(
-                CacheControlMiddleware,
-                cache_control=CacheControl(
-                    cacheablity=env.CACHE_CONTROL_CACHEABLITY,
-                    max_age=env.CACHE_CONTROL_MAX_AGE,
-                    s_maxage=env.CACHE_CONTROL_S_MAXAGE,
-                ),
+                CORSMiddleware,
+                allow_origins=env.CORS_ALLOW_ORIGINS,
+                allow_credentials=env.CORS_CREDENTIALS,
+                allow_methods=env.CORS_ALLOW_METHODS,
+                allow_headers=env.CORS_ALLOW_HEADERS,
             ),
-        )
-
-    if env.GZIP_ENABLE:
-        middlewares.append(
+            Middleware(
+                SQLAlchemyMiddleware,
+            ),
+            Middleware(CorrelationIdMiddleware),
+            Middleware(LoggingMiddleware),
             Middleware(
                 GZipMiddleware,
                 minimum_size=env.GZIP_MININUM_SIZE,
                 compresslevel=env.GZIP_COMPRESS_LEVEL,
-            )
-        )
-    return middlewares
-
-
-def init_settings(app: FastAPI):
-    @app.on_event("startup")
-    async def startup_event():
-        if env.DB_INIT:
-            from core.db.session import Base, engines
-
-            async with engines["writer"].begin() as conn:
-                await conn.run_sync(Base.metadata.create_all)
-
-    @app.on_event("shutdown")
-    def shutdown_event():
-        pass
-
-    @app.exception_handler(CustomException)
-    async def custom_exception_handler(
-        request: Request,
-        exc: CustomException,
-    ):
-        return JSONResponse(
-            status_code=exc.code,
-            content={
-                "error_code": exc.error_code,
-                "message": exc.message,
-            },
-        )
+            ),
+        ],
+        exception_handlers={
+            Exception: exception_handler,
+            HTTPException: http_exception_handler,
+        },
+    )
+    app.include_router(api.router)
+    return app
 
 
 app = create_app()
+app.add_event_handler("startup", events.startup_event)

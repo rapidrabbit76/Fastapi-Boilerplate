@@ -4,11 +4,19 @@ from pydantic import BaseSettings, validator
 
 
 class DatabaseSetting(BaseSettings):
-    DB_WRITER_DB_URL: str
-    DB_READER_DB_URL: str
+    DB_WRITER_DB_URL: str = "mysql+aiomysql://admin:admin@localhost:3306/mydatabase"
+    DB_READER_DB_URL: str = "mysql+aiomysql://admin:admin@localhost:3306/mydatabase"
     DB_INIT: bool = False
     DB_POOL_RECYCLE: int = 3600
     DB_ECHO: bool = False
+
+
+class LoggerSettings(BaseSettings):
+    LOG_PATH: str = "logs"
+    LOG_FILENAME: str = "access.json"
+    LOG_LEVEL: str = "info"
+    LOG_ROTATION: str = "1 days"
+    LOG_RETENTION: str = "1 months"
 
 
 class SecuritySetting(BaseSettings):
@@ -68,6 +76,7 @@ class MiddleWareSetting(BaseSettings):
 
 class Settings(
     DatabaseSetting,
+    LoggerSettings,
     CacheSetting,
     SecuritySetting,
     CacheControlSetting,
@@ -79,5 +88,10 @@ class Settings(
     CORS_ALLOW_METHODS: T.List[str] = ["*"]
     CORS_ALLOW_HEADERS: T.List[str] = ["*"]
 
+    MODE: str = "DEV"
+
     TITLE: str = "{{cookiecutter.project}}"
     DESCRIPTION: str = "{{cookiecutter.description}}"
+    
+    TITLE: str = ""
+    DESCRIPTION: str = ""
