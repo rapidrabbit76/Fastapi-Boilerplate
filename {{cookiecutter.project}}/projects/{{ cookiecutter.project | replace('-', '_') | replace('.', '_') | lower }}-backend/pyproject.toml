@@ -1,0 +1,46 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}-shared-kernel",
+    "{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}-shared-kernel-infra-fastapi",
+    "{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}-shared-kernel-infra-database-sqla",
+    "pendulum>=3.1.0",
+    "nanoid>=2.0.0",
+    "langchain-openai>=0.3.18",
+    "sqlalchemy-fields>=0.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "ruff>=0.11.11",
+    "aiosqlite>=0.21.0",
+    "faker>=35.2.0",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "pytest-testmon>=2.1.3",
+    "alembic>=1.16.1",
+]
+
+
+[tool.uv.sources]
+{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}-shared-kernel = { workspace = true }
+{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}-shared-kernel-infra-fastapi = { workspace = true }
+{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}-shared-kernel-infra-database-sqla = { workspace = true }
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}"]
+[tool.ruff]
+extend = "../../pyproject.toml"
