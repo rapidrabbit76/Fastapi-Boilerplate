@@ -1,0 +1,6 @@
+PASSWOARD_INIT_SUBJECT_KOR = """ [Designovel] - 시스템 비밀번호 초기화 """
+PASSWOARD_INIT_SUBJECT_ENG = """ [Designovel] - System Password Reset """
+REGISTER_SUBJECT_KOR = """ [Designovel] - 고객 계정 확인  """
+REGISTER_SUBJECT_ENG = """ [Designovel] - Customer Account Verification """
+SUBJECT_ORG_INVITE_KOR = """ [Designovel] - {org_name} 에 초대 """
+SUBJECT_ORG_INVITE_ENG = """ [Designovel] - Invitation to {org_name} """
