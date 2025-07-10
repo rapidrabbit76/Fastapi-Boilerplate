@@ -64,7 +64,7 @@ class OAuthSettings(BaseModel):
 
 class AuthSettings(BaseModel):
     cookie_max_age: int = 3600
-    cookie_name: str = "x-auth-designovel-sass"
+    cookie_name: str = "x-auth-lexicon-harvesting"
     cookie_domain: str | None = None
     state_secret: str = "sample"
 
@@ -102,14 +102,8 @@ class RedisStoreSettings(BaseModel):
     lifetime_seconds: int = 31536000
 
 
-class AuthCookieSettings(BaseModel):
-    name: str = "x-auth-lexicon-harvesting"
-    domain: str | None = None
-    samesite: T.Literal["lax", "strict", "none"] = "none"
-
-
 class EmailSettings(BaseModel):
-    sender: str = "no-reply@designovel.com"
+    sender: str = ""
     domain_url: str = "https://app.{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }}.ai"
     reset_password_path: str = "reset-password"
     invite_path: str = "auth/callback/org/invite"
@@ -132,7 +126,7 @@ class RatelimiterSettings(BaseModel):
 
 
 class ObjectStorageSettings(BaseModel):
-    buket: str = "designovel"
+    buket: str
     prefix_key: str | None = None
 
 
@@ -164,7 +158,7 @@ class FastAPISettings(BaseModel):
         "name": "yslee(rapidrabbit76)",
         "email": "yslee.dev@gmail.com",
     }
-    summary: str = "Designovel SaaS API"
+    summary: str = "{{ cookiecutter.project | replace('-', '_') | replace('.', '_') | lower }} API"
 
 
 class RedisSettings(BaseModel):
@@ -178,37 +172,18 @@ class RabbitMqSettings(BaseModel):
     pool_min: int = Field(default=2)
 
 
-class S3UploadSettings(BaseModel):
-    bucket_name: str = "designovel"
-    dir_name: str = "images/ml/gen"
-    cdn_url: str = "https://cdn.designovel.com"
-
-
 class PrometheusSettings(BaseModel):
     secret: str = "secret"
     should_gzip: bool = True
     endpoint: str = "/metrics"
     include_in_schema: bool = False
-    namespace: str = "designovel.saas.backend.production"
+    namespace: str
     metric_subsystem: str = ""
 
 
 class TossPaymentGatewaySettings(BaseModel):
     secret_key: str = ""
     client_key: str = ""
-
-
-class OpenWebUISettings(BaseModel):
-    url: str = "https://chat.idc.designovel.com"
-    admin_token: str = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBiZmQ4OGZjLWQ3YzktNGQ4ZC04OGRiLWEzYjY4NDU5YmUwYSJ9.HpkIhpRtmXByL9LpaFLsO20UvP8wd3Yvqzo8FJ23mtU"
-
-
-class NaverShoppingAPISettings(BaseModel):
-    api_key: str = (
-        "01000000004af83b044b8ae13752e404c037b55b03336cf489b7254d445b7261ca00ff5b1b"
-    )
-    secret_key: str = "AQAAAABK+DsES4rhN1LkBMA3tVsDQPM73aT63PgjxDj5zl4pEw=="
-    customer_id: str = "2196173"
 
 
 class OpenAISettings(BaseModel):
